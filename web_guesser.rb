@@ -1,22 +1,32 @@
 require 'sinatra'
 require 'sinatra/reloader'
 
-get '/' do
-  number = rand(1..10)
+set :number, rand(1..20)
 
-  if params['guess']
-    guess = params['guess'].to_i
+def check_guess(guess)
+  return { number: false, message: false } unless guess
 
-    if guess > number
-      erb :index, locals: { number: number, message: 'Too high!' }
+  guess = guess.to_i
 
-    elsif guess < number
-      erb :index, locals: { number: number, message: 'Too low!' }
+  if guess > settings.number
+    { number: false, message: 'Too high!' }
 
-    elsif guess == number
-      erb :index, locals: { number: number, message: 'You got it!' }
-    end
-  else
-    erb :index, locals: { number: false, message: false }
+  elsif guess < settings.number
+    { number: false, message: 'Too low!' }
+
+  elsif guess == settings.number
+    { number: settings.number, message: 'You got it!' }
   end
+end
+
+get '/' do
+  response = check_guess(params['guess'])
+
+  erb :index, locals: response
+end
+
+get '/start-over' do
+  settings.number = rand(1..20)
+
+  redirect '/'
 end
