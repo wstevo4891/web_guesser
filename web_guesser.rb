@@ -3,10 +3,12 @@ require 'sinatra/reloader'
 
 set :number, rand(1..20)
 
-def check_guess(guess)
-  return { number: false, message: false } unless guess
+def check_guess(params)
+  return { number: settings.number, message: 'You got it!' } if params['cheat']
 
-  guess = guess.to_i
+  return { number: false, message: false } unless params['guess']
+
+  guess = params['guess'].to_i
 
   if guess > settings.number
     { number: false, message: 'Too high!' }
@@ -20,7 +22,7 @@ def check_guess(guess)
 end
 
 get '/' do
-  response = check_guess(params['guess'])
+  response = check_guess(params)
 
   erb :index, locals: response
 end
