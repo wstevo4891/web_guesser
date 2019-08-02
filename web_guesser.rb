@@ -2,7 +2,7 @@ require 'sinatra'
 require 'sinatra/reloader'
 
 get '/' do
-  x = rand
+  number = rand(1..20)
 
-  "THE SECRET NUMBER IS #{x}"
+  erb :index, locals: { number: number }
 end
